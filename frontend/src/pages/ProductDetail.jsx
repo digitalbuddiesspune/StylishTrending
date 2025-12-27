@@ -7,8 +7,6 @@ import ProductCard from '../components/ProductCard';
 import { handleImageError } from '../utils/imageFallback';
 import { productAPI, reviewAPI } from '../utils/api';
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api';
-
 const ProductDetail = () => {
   const { id, category } = useParams();
   const navigate = useNavigate();
@@ -80,37 +78,68 @@ const ProductDetail = () => {
 
       let foundData = null;
 
+      // Try to fetch with the provided category first
       if (category && category !== 'undefined') {
         const apiCategory = categoryMap[category] || category;
         try {
-          const res = await fetch(`${API_BASE_URL}/products/${apiCategory}/${id}`);
-          if (res.ok) {
-            const data = await res.json();
-            if (data.success) foundData = data;
+          // Use the appropriate API method based on category
+          switch (apiCategory) {
+            case 'watches':
+              foundData = await productAPI.getWatchById(id);
+              break;
+            case 'lens':
+              foundData = await productAPI.getLensById(id);
+              break;
+            case 'accessories':
+              foundData = await productAPI.getAccessoryById(id);
+              break;
+            case 'men':
+              foundData = await productAPI.getMenItemById(id);
+              break;
+            case 'women':
+              foundData = await productAPI.getWomenItemById(id);
+              break;
+            default:
+              // Try as generic fetch if category doesn't match
+              break;
           }
         } catch (err) {
-          console.warn("Direct category fetch failed, trying fallback...");
+          console.warn("Direct category fetch failed, trying fallback...", err);
         }
       }
 
-      if (!foundData) {
+      // If not found, try all categories
+      if (!foundData || !foundData.success) {
         for (const cat of validCategories) {
           try {
-            const res = await fetch(`${API_BASE_URL}/products/${cat}/${id}`);
-            if (res.ok) {
-              const data = await res.json();
-              if (data.success) {
-                foundData = data;
+            switch (cat) {
+              case 'watches':
+                foundData = await productAPI.getWatchById(id);
                 break;
-              }
+              case 'lens':
+                foundData = await productAPI.getLensById(id);
+                break;
+              case 'accessories':
+                foundData = await productAPI.getAccessoryById(id);
+                break;
+              case 'men':
+                foundData = await productAPI.getMenItemById(id);
+                break;
+              case 'women':
+                foundData = await productAPI.getWomenItemById(id);
+                break;
+            }
+            if (foundData && foundData.success) {
+              break;
             }
           } catch (e) {
-            // continue
+            // continue to next category
+            continue;
           }
         }
       }
 
-      if (foundData) {
+      if (foundData && foundData.success) {
         setProduct(foundData.data.product);
         if (foundData.data.product.sizes?.length > 0) setSelectedSize(foundData.data.product.sizes[0]);
         if (foundData.data.product.colors?.length > 0) setSelectedColor(foundData.data.product.colors[0]);
