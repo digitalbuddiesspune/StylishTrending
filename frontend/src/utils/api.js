@@ -1,4 +1,15 @@
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api';
+// Ensure API_BASE_URL always ends with /api if not already present
+const getApiBaseUrl = () => {
+  const envUrl = import.meta.env.VITE_API_BASE_URL;
+  if (envUrl) {
+    // If env var is set, ensure it ends with /api
+    return envUrl.endsWith('/api') ? envUrl : `${envUrl.replace(/\/$/, '')}/api`;
+  }
+  // Default to port 5008 (or 5000 if backend is on 5000)
+  return 'http://localhost:5008/api';
+};
+
+const API_BASE_URL = getApiBaseUrl();
 
 // Helper function to make API requests
 const apiRequest = async (endpoint, options = {}) => {
@@ -14,8 +25,41 @@ const apiRequest = async (endpoint, options = {}) => {
   };
 
   try {
-    const response = await fetch(`${API_BASE_URL}${endpoint}`, config);
-    const data = await response.json();
+    // Ensure endpoint starts with / for proper URL construction
+    const normalizedEndpoint = endpoint.startsWith('/') ? endpoint : `/${endpoint}`;
+    const fullUrl = `${API_BASE_URL}${normalizedEndpoint}`;
+    
+    // Debug log in development
+    if (import.meta.env.DEV) {
+      console.log(`[API Request] ${options.method || 'GET'} ${fullUrl}`);
+    }
+    
+    const response = await fetch(fullUrl, config);
+    
+    // Check if response is JSON before parsing
+    const contentType = response.headers.get('content-type');
+    let data;
+    
+    if (contentType && contentType.includes('application/json')) {
+      data = await response.json();
+    } else {
+      // If not JSON (e.g., HTML error page), read as text for better error message
+      const text = await response.text();
+      console.error(`Non-JSON response from ${endpoint}:`, text.substring(0, 200));
+      
+      // Create a meaningful error
+      const error = new Error(
+        response.status === 404 
+          ? `Route not found: ${endpoint}` 
+          : `Server returned ${response.status}: ${response.statusText}`
+      );
+      error.response = { 
+        status: response.status, 
+        statusText: response.statusText,
+        data: { message: `Expected JSON but received ${contentType || 'unknown content type'}` }
+      };
+      throw error;
+    }
 
     if (!response.ok) {
       // Create error with response data attached
