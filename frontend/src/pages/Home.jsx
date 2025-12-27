@@ -1,0 +1,644 @@
+import { useState, useEffect, useRef } from 'react';
+import { Link } from 'react-router-dom';
+// import Footer from '../components/Footer'; 
+import ProductCard from '../components/ProductCard';
+import { productAPI } from '../utils/api';
+import { handleImageError } from '../utils/imageFallback';
+
+// --- ICONS (Embedded directly so no install needed) ---
+const IconChevronLeft = () => <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>;
+const IconChevronRight = () => <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>;
+const IconClose = () => <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>;
+
+// --- API FETCH FUNCTIONS (Kept from previous version) ---
+const fetchFreshDrops = async () => {
+  try {
+    const [menShoes, womenShoes, accessories, watches, lenses, mensLenses] = await Promise.all([
+      productAPI.getMenItems({ limit: 10, category: 'shoes' }),
+      productAPI.getWomenItems({ limit: 10, category: 'shoes' }),
+      productAPI.getAccessories({ limit: 10 }),
+      productAPI.getWatches({ limit: 10 }),
+      productAPI.getLenses({ limit: 10 }),
+      productAPI.getLenses({ limit: 10, gender: 'men' })
+    ]);
+    
+    // Combine shoes from men and women, take exactly 12
+    let allShoes = [];
+    if (menShoes.success && menShoes.data.products) {
+      allShoes = [...allShoes, ...menShoes.data.products];
+    }
+    if (womenShoes.success && womenShoes.data.products) {
+      allShoes = [...allShoes, ...womenShoes.data.products];
+    }
+    const shoes = allShoes.slice(0, 12);
+    
+    // Get exactly 10 accessories
+    const acc = accessories.success && accessories.data.products 
+      ? accessories.data.products.slice(0, 10) 
+      : [];
+    
+    // Get exactly 10 watches
+    const watch = watches.success && watches.data.products 
+      ? watches.data.products.slice(0, 10) 
+      : [];
+    
+    // Get exactly 10 lenses
+    const lens = lenses.success && lenses.data.products 
+      ? lenses.data.products.slice(0, 10) 
+      : [];
+    
+    // Get exactly 10 men's lenses
+    const mensLens = mensLenses.success && mensLenses.data.products 
+      ? mensLenses.data.products.slice(0, 10) 
+      : [];
+    
+    // Combine all: 12 shoes + 10 accessories + 10 watches + 10 lenses + 10 men's lenses = 52 products total
+    return [...shoes, ...acc, ...watch, ...lens, ...mensLens];
+  } catch (error) {
+    console.error("Error fetching fresh drops:", error);
+    return [];
+  }
+};
+
+const fetchSaleItems = async () => {
+  const res = await productAPI.getAllProducts({ limit: 4, onSale: true, sort: 'discountPercent', order: 'desc' });
+  return res.success ? res.data.products : [];
+};
+
+const fetchMen = async () => {
+  const res = await productAPI.getMenItems({ limit: 4 });
+  return res.success ? res.data.products : [];
+};
+
+const fetchWomen = async () => {
+  const res = await productAPI.getWomenItems({ limit: 4 });
+  return res.success ? res.data.products : [];
+};
+
+const fetchWatches = async () => {
+  const res = await productAPI.getWatches({ limit: 4 });
+  return res.success ? res.data.products : [];
+};
+
+const fetchAccessories = async () => {
+  try {
+    const [lenses, acc] = await Promise.all([
+      productAPI.getLenses({ limit: 2 }),
+      productAPI.getAccessories({ limit: 2 })
+    ]);
+    let combined = [];
+    if (lenses.success) combined = [...combined, ...lenses.data.products];
+    if (acc.success) combined = [...combined, ...acc.data.products];
+    return combined.slice(0, 4);
+  } catch (error) {
+    console.error("Error fetching accessories:", error);
+    return [];
+  }
+};  
+
+const LuxeSection = () => {
+  const scrollRef = useRef(null);
+
+  // Sample data to match the image aesthetics
+  const luxeProducts = [
+    {
+      id: 1,
+      brand: "CLINIQUE",
+      image: "https://images.unsplash.com/photo-1616683693504-3ea7e9ad6fec?q=80&w=800&auto=format&fit=crop",
+      link: "/luxe/clinique"
+    },
+    {
+      id: 2,
+      brand: "RABANNE",
+      image: "https://images.unsplash.com/photo-1594035910387-fea4779426e9?q=80&w=800&auto=format&fit=crop",
+      link: "/luxe/rabanne"
+    },
+    {
+      id: 3,
+      brand: "ISSEY MIYAKE",
+      image: "https://images.unsplash.com/photo-1585232561025-aa543d3122c4?q=80&w=800&auto=format&fit=crop",
+      link: "/luxe/issey"
+    },
+    {
+      id: 4,
+      brand: "VERSACE",
+      image: "https://images.unsplash.com/photo-1587017539504-67cfbddac569?q=80&w=800&auto=format&fit=crop",
+      link: "/luxe/versace"
+    },
+  ];
+}
+
+const scroll = (direction) => {
+  if (scrollRef.current) {
+    const { current } = scrollRef;
+    const scrollAmount = 300; // Adjust scroll distance
+    if (direction === 'left') {
+      current.scrollLeft -= scrollAmount;
+    } else {
+      current.scrollLeft += scrollAmount;
+    }
+  }
+};
+
+
+
+// --- NEWS TICKER COMPONENT (New) ---
+const NewsTicker = () => {
+  const marqueeContent = "⚡ FREE SHIPPING ON ALL ORDERS OVER ₹1,000 ⚡ | ✨ NEW SEASON STYLES ADDED DAILY ✨ | 🎁 LIMITED TIME DISCOUNTS ON WATCHES 🎁 | 🛍️ JOIN OUR LOYALTY PROGRAM 🛍️";
+
+  // NOTE: For the 'continuous' marquee animation, this CSS needs to be applied.
+  // In a real project, place this CSS in your global stylesheet (e.g., index.css).
+  // For a self-contained solution, we use the <style> tag here.
+
+  return (
+    <>
+    
+      <style>
+        {`
+            @keyframes marquee {
+                0% { transform: translateX(0); }
+                100% { transform: translateX(-50%); }
+            }
+            .animate-marquee {
+                animation: marquee 30s linear infinite;
+                background-colour: black;
+            }
+            `}
+      </style>
+      <div className="overflow-hidden bg-black text-white py-3 border-b border-gray-700">
+        <div className="whitespace-nowrap w-[200%] flex animate-marquee">
+          {/* Duplicate content to ensure seamless loop */}
+          <span className="text-sm font-medium tracking-wider mx-8">{marqueeContent}</span>
+          <span className="text-sm font-medium tracking-wider mx-8" aria-hidden="true">{marqueeContent}</span>
+        </div>
+      </div>
+    </>
+  );
+};
+
+
+const Home = () => {
+  // --- UI STATE ---
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const [activeStoryIndex, setActiveStoryIndex] = useState(null);
+  const [isStoryViewerOpen, setIsStoryViewerOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const categoryScrollRef = useRef(null);
+  const lifestyleScrollRef = useRef(null);
+
+  // --- DATA STATE & FETCHING (Unchanged) ---
+  const [freshDrops, setFreshDrops] = useState([]);
+  const [saleItems, setSaleItems] = useState([]);
+  const [menItems, setMenItems] = useState([]);
+  const [womenItems, setWomenItems] = useState([]);
+  const [watches, setWatches] = useState([]);
+  const [accessories, setAccessories] = useState([]);
+
+  useEffect(() => {
+    const loadAllData = async () => {
+      setIsLoading(true);
+      try {
+        const [freshDropsData, saleData, menData, womenData, watchesData, accessoriesData] = await Promise.all([
+          fetchFreshDrops(), fetchSaleItems(), fetchMen(), fetchWomen(), fetchWatches(), fetchAccessories()
+        ]);
+        setFreshDrops(freshDropsData);
+        setSaleItems(saleData);
+        setMenItems(menData);
+        setWomenItems(womenData);
+        setWatches(watchesData);
+        setAccessories(accessoriesData);
+      } catch (error) {
+        console.error("Error loading home page data:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    loadAllData();
+  }, []);
+
+
+  const stories = [
+    { hashtag: 'Xmas', emoji: '🎄', image: 'https://res.cloudinary.com/de1bg8ivx/image/upload/v1764741928/IMG_20251123_161820_skzchs.png' },
+    { hashtag: 'Desi', emoji: '😎', image: 'https://res.cloudinary.com/de1bg8ivx/image/upload/v1764741995/image-104_iuyyuw.png' },
+    { hashtag: 'Street', emoji: '🔥', image: 'https://res.cloudinary.com/de1bg8ivx/image/upload/v1764742092/ZfLAMkmNsf2sHkoW_DELHI-FACES-1_fjnvcb.avif' },
+    { hashtag: 'FitCheck', emoji: '✨', image: 'https://res.cloudinary.com/de1bg8ivx/image/upload/v1764742199/0d37737c8c2c7536422e411fb68eeeb3_ylhf3n.jpg' },
+    { hashtag: 'Tees', emoji: '👕', image: 'https://res.cloudinary.com/de1bg8ivx/image/upload/v1764742259/0424-TSHIRT-06_1_7c30d8ed-155d-47a6-a52f-52858221a302_fjdfpo.webp', link: '/mens' },
+    { hashtag: 'Denim', emoji: '👖', image: 'https://res.cloudinary.com/de1bg8ivx/image/upload/v1764742467/GettyImages-2175843730_q21gse.jpg' },
+    { hashtag: 'Scarf', emoji: '🧣', image: 'https://res.cloudinary.com/de1bg8ivx/image/upload/v1764742548/NECK_20SCARF_20TREND_20190625_20GettyImages-1490484490_ccdwdy.webp' }
+  ];
+
+  const carouselSlides = [
+    { image: 'https://res.cloudinary.com/de1bg8ivx/image/upload/v1765179209/62987769-6299-4622-965f-168e87ee3572.png', link: '/watches' },
+    { image: 'https://res.cloudinary.com/de1bg8ivx/image/upload/v1765186313/12de4e83-d480-42c3-ad1d-7078f5d19074.png', link: '/men' },
+    { image: 'https://res.cloudinary.com/de1bg8ivx/image/upload/v1765179353/3f1d3d63-ed99-45d8-af35-94c5cdab655c.png', link: '/women' },
+    { image: 'https://cmsimages.shoppersstop.com/main_pb_main_web_e1bd1656a9/main_pb_main_web_e1bd1656a9.png', link: '/sale' }
+  ];
+
+  // --- CAROUSEL LOGIC ---
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % carouselSlides.length);
+    }, 5000);
+    return () => clearInterval(interval);
+  }, [carouselSlides.length]);
+
+  const nextSlide = () => setCurrentSlide((prev) => (prev + 1) % carouselSlides.length);
+  const prevSlide = () => setCurrentSlide((prev) => (prev - 1 + carouselSlides.length) % carouselSlides.length);
+  const goToSlide = (index) => setCurrentSlide(index);
+
+  return (
+    <div className="min-h-screen bg-white font-sans text-gray-800 mt-">
+      
+      {/* --- HERO SECTION (Restored & Top Margin Removed) --- */}
+      <div className="relative w-full bg-gray-50 overflow-hidden group">
+        <div className="hidden lg:block relative w-full">
+          <div className="relative w-full max-w-[2000px] mx-auto aspect-[21/9] md:aspect-[3/1]">
+            {carouselSlides.map((slide, index) => (
+              <Link
+                to={slide.link}
+                key={index}
+                className={`absolute inset-0 transition-opacity duration-700 ease-in-out ${index === currentSlide ? 'opacity-100 z-10' : 'opacity-0 z-0'}`}
+              >
+                <img
+                  src={slide.image}
+                  alt="Banner"
+                  className="w-full h-full object-contain object-center"
+                  loading={index === 0 ? "eager" : "lazy"}
+                  onError={(e) => handleImageError(e, 1920, 600)}
+                />
+              </Link>
+            ))}
+          </div>
+          {/* Controls */}
+          <button onClick={prevSlide} className="absolute left-4 top-1/2 -translate-y-1/2 z-20 p-3 rounded-full bg-white/90 text-gray-800 hover:bg-white shadow-lg transition opacity-0 group-hover:opacity-100 transform hover:scale-110">
+            <IconChevronLeft />
+          </button>
+          <button onClick={nextSlide} className="absolute right-4 top-1/2 -translate-y-1/2 z-20 p-3 rounded-full bg-white/90 text-gray-800 hover:bg-white shadow-lg transition opacity-0 group-hover:opacity-100 transform hover:scale-110">
+            <IconChevronRight />
+          </button>
+          {/* Indicators */}
+          <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2 z-20">
+            {carouselSlides.map((_, index) => (
+              <button
+                key={index}
+                onClick={() => goToSlide(index)}
+                className={`h-1.5 rounded-full transition-all duration-300 shadow-sm ${index === currentSlide ? 'w-8 bg-gray-800' : 'w-2 bg-gray-400 hover:bg-gray-600'}`}
+              />
+            ))}
+          </div>
+        </div>
+        {/* Mobile Banner */}
+        <div className="block lg:hidden w-full">
+          <Link to="/sale">
+            <img src="https://res.cloudinary.com/de1bg8ivx/image/upload/v1765137539/Black_Elegant_Watch_Special_Offer_Instagram_Post_1_xjcbva.svg" alt="Mobile Banner" className="w-full h-auto object-contain block" loading="eager" />
+          </Link>
+        </div>
+      </div>
+
+      {/* --- NEWS TICKER SECTION (New Continuous Marquee) --- */}
+      <NewsTicker />
+
+      {/* --- STORIES SECTION (Attractive Gradient Rings) --- */}
+      <div className="py-8 bg-white border-b border-gray-100 shadow-sm">
+        <div className="max-w-7xl mx-auto px-4 text-center">
+          <h3 className="text-xl font-bold uppercase tracking-widest text-gray-500 mb-5">Stories By StyleTrending</h3>
+          <div className="flex justify-start md:justify-center gap-6 overflow-x-auto scrollbar-hide pb-2 px-2">
+            {stories.map((item, index) => (
+              <div
+                key={index}
+                className="flex-shrink-0 flex flex-col items-center gap-2 cursor-pointer group"
+                onClick={() => { setActiveStoryIndex(index); setIsStoryViewerOpen(true); }}
+              >
+                <div className="relative p-[0px] rounded-full bg-gradient-to-tr bg-black transition-transform duration-300">
+                  <div className="p-0.5 bg-black rounded-full">
+                    <img src={item.image} alt={item.hashtag} className="w-16 h-16 sm:w-20 sm:h-20 rounded-full object-cover border-2 border-white" />
+                  </div>
+                </div>
+                <span className="text-xs font-semibold text-gray-700">#{item.hashtag}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      
+
+      {/* <section className="py-5 bg-white">
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="flex justify-between items-end mb-10">
+            <div>
+              <h2 className="text-3xl font-bold text-gray-900 tracking-tight">Shop by Category</h2>
+              <p className="text-gray-500 mt-2 font-light">Curated essentials for the modern wardrobe.</p>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {[
+              {
+                id: 'men',
+                label: 'MEN',
+                sub: 'The Gentleman\'s Edit',
+                image: 'https://images.unsplash.com/photo-1617137984095-74e4e5e3613f?q=80&w=600&auto=format&fit=crop'
+              },
+              {
+                id: 'women',
+                label: 'WOMEN',
+                sub: 'Elegance Redefined',
+                image: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=600&auto=format&fit=crop'
+              },
+              {
+                id: 'watches',
+                label: 'WATCHES',
+                sub: 'Timeless Luxury',
+                image: 'https://images.unsplash.com/photo-1614164185128-e4ec99c436d7?q=80&w=600&auto=format&fit=crop'
+              },
+              {
+                id: 'accessories',
+                label: 'ACCESSORIES',
+                sub: 'Finishing Touches',
+                image: 'https://images.unsplash.com/photo-1511499767150-a48a237f0083?q=80&w=600&auto=format&fit=crop'
+              }
+            ].map((cat) => (
+              <Link
+                key={cat.id}
+                to={`/${cat.id}`}
+                className="group relative block h-96 overflow-hidden rounded-2xl shadow-sm hover:shadow-2xl transition-all duration-500"
+              >
+                
+                <img
+                  src={cat.image}
+                  alt={cat.label}
+                  className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-110"
+                  loading="lazy"
+                />
+
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-60 group-hover:opacity-40 transition-opacity duration-500"></div>
+
+              
+                <div className="absolute bottom-4 left-4 right-4 p-5 rounded-xl bg-white/10 backdrop-blur-md border border-white/20 shadow-lg transition-all duration-300 group-hover:bg-white/20 group-hover:bottom-6">
+                  <div className="flex justify-between items-center">
+                    <div>
+                      <h3 className="text-xl font-bold text-white tracking-widest">{cat.label}</h3>
+                      <p className="text-gray-200 text-xs mt-1 font-medium">{cat.sub}</p>
+                    </div>
+
+                    
+                    <div className="w-8 h-8 rounded-full bg-white text-black flex items-center justify-center transform translate-x-10 opacity-0 group-hover:translate-x-0 group-hover:opacity-100 transition-all duration-500">
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
+                    </div>
+                  </div>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section> */}
+
+      {/* --- BROWSE BY CATEGORY (Accordion - Light & Compact) --- */}
+      <section className="py-5 mb-20 bg-white">
+        <div className="max-w-7xl mx-auto px-2">
+          <div className="mb-8 text-center">
+             <span className="text-amber-600 font-bold tracking-[0.2em] -text-xl uppercase">Curated Collections</span>
+             <h2 className="text-3xl font-bold text-gray-600 mt-2">Shop By Category</h2>
+          </div>
+
+          {/* Accordion Container - Compact Height */}
+          <div className="flex flex-col md:flex-row h-[500px] md:h-[400px] gap-2 w-full">
+            {[
+              { 
+                id: 'men', 
+                label: 'MEN', 
+                desc: 'Sharp tailoring.',
+                // Fixed Image URL
+                image: 'https://res.cloudinary.com/de1bg8ivx/image/upload/v1765192028/1_08426779-951c-47b7-9feb-ef29ca85b27c_frapuz.webp' 
+              },
+              { 
+                id: 'women', 
+                label: 'WOMEN', 
+                desc: 'Modern silhouettes.',
+                image: 'https://res.cloudinary.com/de1bg8ivx/image/upload/v1765191722/c037121844264e7d40ffc2bb11335a21_vadndt.jpg' 
+              },
+              { 
+                id: 'watches', 
+                label: 'WATCHES', 
+                desc: 'Precision crafted.',
+                image: 'https://res.cloudinary.com/de1bg8ivx/image/upload/v1765191651/photo-1524592094714-0f0654e20314_dv6fdz.avif' 
+              },
+              { 
+                id: 'accessories', 
+                label: 'ACCESSORIES', 
+                desc: 'Final touches.',
+                image: 'https://res.cloudinary.com/de1bg8ivx/image/upload/v1765191618/photo-1515562141207-7a88fb7ce338_k4onlv.avif' 
+              }
+            ].map((cat) => (
+              <Link 
+                key={cat.id} 
+                to={`/${cat.id}`} 
+                className="group relative flex-1 hover:grow-[3] transition-all duration-500 ease-out overflow-hidden rounded-lg cursor-pointer"
+              >
+                {/* Background Image */}
+                <div className="absolute inset-0 w-full h-full">
+                  <img 
+                    src={cat.image} 
+                    alt={cat.label} 
+                    className="w-full h-full object-cover filter md:grayscale group-hover:grayscale-0 scale-100 group-hover:scale-105 transition-all duration-500" 
+                  />
+                  {/* Overlay - Lighter for Light Theme */}
+                  <div className="absolute inset-0 bg-black/20 group-hover:bg-black/0 transition-colors duration-500"></div>
+                  {/* Text Gradient */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-80"></div>
+                </div>
+
+                {/* Content */}
+                <div className="absolute bottom-0 w-full p-6 flex flex-col justify-end items-start">
+                  
+                  <h3 className="text-xl md:text-2xl font-bold text-white uppercase tracking-widest mb-1 whitespace-nowrap">
+                    {cat.label}
+                  </h3>
+
+                  <div className="max-h-0 opacity-0 group-hover:max-h-20 group-hover:opacity-100 transition-all duration-500 overflow-hidden">
+                    <p className="text-gray-200 text-sm font-medium mb-2">
+                      {cat.desc}
+                    </p>
+                  </div>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
+
+      <div className="w-fit m-0 p-0 leading-none overflow-visible h-auto w-auto">
+        <img
+          src="https://res.cloudinary.com/de1bg8ivx/image/upload/v1765186209/83d30f87-eb70-4315-8291-e1880c206991.png"
+          alt="Full size"
+          className="block w-auto h-auto m-0 p-0 border-none outline-none"
+        />
+      </div>
+      {/* <div className="w-fit m-0 p-0 leading-none overflow-visible h-auto w-auto hidden lg:block">
+        <img
+          src="https://res.cloudinary.com/de1bg8ivx/image/upload/v1765186240/d347cf32-1980-4355-9ac5-9168cf727263.png"
+          alt="Full size"
+          className="block w-auto h-auto m-0 p-0 border-none outline-none"
+        />
+      </div> */}
+
+
+
+      {/* --- PRODUCT SECTIONS (Improved Headers and Buttons) --- */}
+
+      <ProductSection
+        title="Fresh Drops"
+        subtitle="Be the first to wear the trend"
+        products={freshDrops}
+        viewAllLink="/men/shoes"
+        isLoading={isLoading}
+      />
+      <div className="w-fit m-0 p-0 leading-none overflow-visible h-auto w-auto hidden lg:block">
+        <h2 className='m-5 text-start text-2xl font-bold'>Coming soon...</h2>
+        <img
+          src="https://res.cloudinary.com/de1bg8ivx/image/upload/v1765187037/ce43b64f-3f08-4346-ad66-1f7306b1006f.png"
+          alt="Full size"
+          className="block w-auto h-auto m-0 p-0 border-none outline-none"
+        />
+      </div>
+
+      <div className="w-fit m-0 p-0 leading-none overflow-visible h-auto w-auto lg:hidden">
+        <img
+          src="https://res.cloudinary.com/de1bg8ivx/image/upload/v1765137210/Black_Elegant_Watch_Special_Offer_Instagram_Post_y3foz1.svg"
+          alt="Full size"
+          className="block w-auto h-auto m-0 p-0 border-none outline-none"
+        />
+      </div>
+
+
+
+      {/* <ProductSection
+        title="Steal Deals"
+        subtitle="Premium styles at unbeatable prices"
+        products={saleItems}
+        viewAllLink="/sale"
+        bgColor="bg-gradient-to-br from-gray-50 to-white"
+        isLoading={isLoading}
+      /> */}
+
+      {/* 3. Men & Women - Grid Layout */}
+      <div className="max-w-7xl mx-auto px-4 py-12">
+        <div className="grid lg:grid-cols-2 gap-4 lg:gap-12">
+          <div className="bg-gray-100 p-6 border border-gray-200">
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-2xl font-extrabold text-gray-900">For Him</h2>
+              <Link to="/men" className="text-sm font-semibold text-gray-700 hover:text-gray-900 transition">View All</Link>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              {isLoading ? [1, 2].map(i => <SkeletonCard key={i} />) : menItems.map(p => <ProductCard key={p._id} product={p} />)}
+            </div>
+          </div>
+          <div className="bg-pink-50 p-6 border border-pink-200">
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-2xl font-extrabold text-pink-600">For Her</h2>
+              <Link to="/women" className="text-sm font-semibold text-pink-600 hover:text-pink-800 transition">View All</Link>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              {isLoading ? [1, 2].map(i => <SkeletonCard key={i} />) : womenItems.map(p => <ProductCard key={p._id} product={p} />)}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="max-w-7xl mx-auto px-4 mt-12 mb-8">
+        <div className="text-center mb-8">
+          <h2 className="text-3xl font-extrabold text-gray-900">Featured Collections</h2>
+          <p className="text-gray-500">Essential styles for him and her.</p>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
+          <Link to="/women/shirt" className="block w-full overflow-hidden rounded-xl duration-300 group">
+            <img src="https://res.cloudinary.com/de1bg8ivx/image/upload/v1763492921/Black_and_White_Modern_New_Arrivals_Blog_Banner_4_x9v1lw.png" alt="Women" className="w-full h-auto block transform group-hover:scale-105 transition-transform duration-500" loading="lazy" />
+          </Link>
+          <Link to="/men/shirt" className="block w-full overflow-hidden duration-300 group">
+            <img src="https://res.cloudinary.com/de1bg8ivx/image/upload/v1763493394/5ad7474b-2e60-47c5-b993-cdc9c1449c08.png" alt="Men" className="w-full h-auto block transform group-hover:scale-105 transition-transform duration-500" loading="lazy" />
+          </Link>
+        </div>
+      </div>
+
+     
+
+      {/* --- STORY VIEWER MODAL (Unchanged) --- */}
+      {isStoryViewerOpen && activeStoryIndex !== null && (
+        <div className="fixed inset-0 z-[100] bg-black/95 flex items-center justify-center" onClick={() => setIsStoryViewerOpen(false)}>
+          <button onClick={(e) => { e.stopPropagation(); setIsStoryViewerOpen(false); }} className="absolute top-6 right-6 z-20 text-white/70 hover:text-white transition bg-white/10 rounded-full p-2"><IconClose /></button>
+
+          {activeStoryIndex > 0 && <button onClick={(e) => { e.stopPropagation(); setActiveStoryIndex(activeStoryIndex - 1); }} className="absolute left-4 top-1/2 -translate-y-1/2 z-20 text-white hover:opacity-70 bg-white/10 rounded-full p-2"><IconChevronLeft /></button>}
+          {activeStoryIndex < stories.length - 1 && <button onClick={(e) => { e.stopPropagation(); setActiveStoryIndex(activeStoryIndex + 1); }} className="absolute right-4 top-1/2 -translate-y-1/2 z-20 text-white hover:opacity-70 bg-white/10 rounded-full p-2"><IconChevronRight /></button>}
+
+          <div className="relative w-full h-full max-w-md mx-auto flex flex-col items-center justify-center" onClick={(e) => e.stopPropagation()}>
+            <div className="absolute top-4 left-4 right-4 flex gap-1 z-20">
+              {stories.map((_, index) => (
+                <div key={index} className={`h-1 rounded-full flex-1 transition-all duration-300 ${index <= activeStoryIndex ? 'bg-white' : 'bg-white/30'}`} />
+              ))}
+            </div>
+            <img src={stories[activeStoryIndex].image} alt={stories[activeStoryIndex].hashtag} className="w-full h-full object-contain max-h-[85vh] rounded-lg" />
+            <div className="absolute bottom-20 text-center bg-black/50 px-6 py-2 rounded-full backdrop-blur-sm">
+              <span className="text-xl font-bold text-white">{stories[activeStoryIndex].hashtag} {stories[activeStoryIndex].emoji}</span>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+// --- REUSABLE SUB-COMPONENTS ---
+
+const SkeletonCard = () => <div className="h-64 bg-gray-200 animate-pulse rounded-xl"></div>;
+
+const ProductSection = ({ title, subtitle, products, viewAllLink, bgColor = 'bg-white', isLoading }) => {
+  return (
+    <section className={`py-16 ${bgColor}`}>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-between items-end mb-8 border-b pb-4 border-gray-200">
+          <div>
+            <h2 className="text-3xl font-extrabold text-gray-900">{title}</h2>
+            {subtitle && <p className="text-gray-500 mt-1">{subtitle}</p>}
+          </div>
+          {viewAllLink && (
+            <Link
+              to={viewAllLink}
+              className="hidden sm:inline-block px-6 py-2 rounded-full border border-gray-300 font-semibold text-white bg-gray-900 hover:bg-gray-900 hover:text-white hover:border-transparent transform"
+            >
+              View All
+            </Link>
+          )}
+        </div>
+
+        {isLoading ? (
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+            {[1, 2, 3, 4].map(i => <SkeletonCard key={i} />)}
+          </div>
+        ) : (
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+            {products && products.length > 0 ? (
+              products.map((product) => (
+                <ProductCard key={product._id} product={product} />
+              ))
+            ) : (
+              <p className="col-span-4 text-center text-gray-500 py-10">No products found.</p>
+            )}
+          </div>
+        )}
+
+        {/* Mobile View All Button (Visible only on small screens) */}
+        {viewAllLink && (
+          <div className="mt-8 text-center sm:hidden">
+            <Link to={viewAllLink} className="inline-block px-8 py-3 rounded-full bg-gray-900 text-white font-semibold shadow-lg">View All</Link>
+          </div>
+        )}
+      </div>
+    </section>
+  );
+};
+
+
+
+export default Home;
