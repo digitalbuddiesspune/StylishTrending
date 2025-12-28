@@ -881,7 +881,7 @@ const ProductDetail = () => {
               </div>
 
               {/* Reviews Summary */}
-              {reviewStats && reviewStats.averageRating && (
+              {reviewStats && reviewStats.averageRating > 0 && (
                 <div className="bg-white border border-gray-200 rounded-lg p-5">
                   <div className="flex items-center gap-4 mb-4">
                     <div className="text-center">
