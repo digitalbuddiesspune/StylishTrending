@@ -305,7 +305,7 @@ const Checkout = () => {
 
   return (
     <div 
-      className="min-h-screen bg-gray-50 transition-opacity duration-300"
+      className="min-h-screen bg-gray-50 transition-opacity duration-300 overflow-x-hidden"
       style={{
         opacity: showSuccessModal ? 0.3 : 1,
         pointerEvents: showSuccessModal ? 'none' : 'auto',
@@ -313,22 +313,22 @@ const Checkout = () => {
       }}
     >
       {/* Professional Header */}
-      <div className="bg-white border-b border-gray-200 sticky top-0 z-20 shadow-sm">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-14 flex items-center justify-between">
-          <div>
-            <h1 className="text-lg font-semibold text-gray-900">Checkout</h1>
-            <p className="text-xs text-gray-500 mt-0.5">{cart.length} {cart.length === 1 ? 'item' : 'items'}</p>
+      <div className="bg-white border-b border-gray-200 sticky top-0 z-20 shadow-sm overflow-x-hidden">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-14 flex items-center justify-between gap-2">
+          <div className="min-w-0 flex-1">
+            <h1 className="text-lg font-semibold text-gray-900 truncate">Checkout</h1>
+            <p className="text-xs text-gray-500 mt-0.5 truncate">{cart.length} {cart.length === 1 ? 'item' : 'items'}</p>
           </div>
           <button
             onClick={() => navigate('/cart')}
-            className="text-sm text-gray-600 hover:text-gray-900 font-medium"
+            className="text-xs sm:text-sm text-gray-600 hover:text-gray-900 font-medium flex-shrink-0"
           >
             ← Back to Cart
           </button>
         </div>
       </div>
 
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8 overflow-x-hidden">
 
         {/* Success Modal with Smooth Animations */}
         {showSuccessModal && (
@@ -459,7 +459,7 @@ const Checkout = () => {
         {/* Enhanced Processing Order Overlay with Steps */}
         {isProcessingOrder && (
           <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 backdrop-blur-sm">
-            <div className="bg-white rounded-xl shadow-2xl p-8 max-w-md w-full mx-4">
+            <div className="bg-white rounded-xl shadow-2xl p-6 sm:p-8 max-w-md w-full mx-4 overflow-y-auto max-h-[90vh]">
               <div className="text-center">
                 <div className="flex justify-center mb-6">
                   <div className="relative">
@@ -594,12 +594,12 @@ const Checkout = () => {
           </div>
         )}
 
-        <div className="grid lg:grid-cols-3 gap-8">
+        <div className="grid lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
           {/* Left Column - Shipping Address Form */}
-          <div className="lg:col-span-2 space-y-6">
+          <div className="lg:col-span-2 space-y-4 sm:space-y-6">
             {/* Shipping Address Card */}
-            <div className="bg-white rounded-lg border border-gray-200 shadow-sm">
-              <div className="px-6 py-4 border-b border-gray-200">
+            <div className="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden">
+              <div className="px-4 sm:px-6 py-4 border-b border-gray-200">
                 <div className="flex items-center justify-between">
                   <h2 className="text-base font-semibold text-gray-900">Shipping Address</h2>
                   {addressSaved && (
@@ -610,7 +610,7 @@ const Checkout = () => {
                   )}
                 </div>
               </div>
-              <div className="p-6 space-y-4">
+              <div className="p-4 sm:p-6 space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1.5">
                     Full Name <span className="text-red-500">*</span>
@@ -653,7 +653,7 @@ const Checkout = () => {
                     placeholder="Enter your complete address"
                   />
                 </div>
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1.5">
                       City <span className="text-red-500">*</span>
@@ -680,7 +680,7 @@ const Checkout = () => {
                     />
                   </div>
                 </div>
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1.5">ZIP Code</label>
                     <input
@@ -735,11 +735,11 @@ const Checkout = () => {
 
           {/* Right Column - Order Summary */}
           <div className="lg:col-span-1">
-            <div className="bg-white rounded-lg border border-gray-200 shadow-sm sticky top-24">
-              <div className="px-6 py-4 border-b border-gray-200">
+            <div className="bg-white rounded-lg border border-gray-200 shadow-sm lg:sticky lg:top-24 overflow-hidden">
+              <div className="px-4 sm:px-6 py-4 border-b border-gray-200">
                 <h2 className="text-base font-semibold text-gray-900">Order Summary</h2>
               </div>
-              <div className="p-6 space-y-4 max-h-64 overflow-y-auto">
+              <div className="p-4 sm:p-6 space-y-4 max-h-64 overflow-y-auto">
                 {cart.map((item) => {
                   const product = item.product || item;
                   const price = product.price || product.finalPrice || 0;
@@ -754,8 +754,8 @@ const Checkout = () => {
                           />
                         </div>
                       )}
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-gray-900 truncate">{product.name}</p>
+                      <div className="flex-1 min-w-0 overflow-hidden">
+                        <p className="text-sm font-medium text-gray-900 break-words">{product.name}</p>
                         <p className="text-xs text-gray-500 mt-0.5">Qty: {item.quantity}</p>
                         <p className="text-sm font-semibold text-gray-900 mt-1">
                           ₹{(price * item.quantity).toLocaleString()}
@@ -765,7 +765,7 @@ const Checkout = () => {
                   );
                 })}
               </div>
-              <div className="px-6 py-4 border-t border-gray-200 bg-gray-50 space-y-2.5">
+              <div className="px-4 sm:px-6 py-4 border-t border-gray-200 bg-gray-50 space-y-2.5">
                 <div className="flex justify-between text-sm">
                   <span className="text-gray-600">Subtotal</span>
                   <span className="font-medium text-gray-900">₹{getCartTotal().toLocaleString()}</span>
@@ -781,7 +781,7 @@ const Checkout = () => {
               </div>
 
               {/* Payment Method Selection */}
-              <div className="px-6 py-4 border-t border-gray-200">
+              <div className="px-4 sm:px-6 py-4 border-t border-gray-200">
                 <h3 className="text-sm font-semibold text-gray-900 mb-3">Payment Method</h3>
                 <div className="space-y-2.5">
                   {/* <label className={`flex items-start gap-3 p-3 border rounded-md cursor-pointer transition-all ${
@@ -815,8 +815,8 @@ const Checkout = () => {
                       onChange={(e) => setPaymentMethod(e.target.value)}
                       className="w-4 h-4 text-gray-900 focus:ring-gray-900 mt-0.5"
                     />
-                    <div className="flex-1">
-                      <div className="text-sm font-medium text-gray-900">Cash on Delivery</div>
+                    <div className="flex-1 min-w-0">
+                      <div className="text-sm font-medium text-gray-900 break-words">Cash on Delivery</div>
                       <div className="text-xs text-gray-500 mt-0.5">Pay on delivery</div>
                     </div>
                   </label>
@@ -824,7 +824,7 @@ const Checkout = () => {
               </div>
 
               {/* Payment Button */}
-              <div className="px-6 py-4 border-t border-gray-200 bg-white">
+              <div className="px-4 sm:px-6 py-4 border-t border-gray-200 bg-white">
                 <button
                   onClick={handlePayment}
                   disabled={loading || isProcessingOrder}
@@ -874,8 +874,8 @@ const Checkout = () => {
 
       {/* Invoice Preview Modal */}
       {showInvoicePreview && (
-        <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4 overflow-y-auto" onClick={() => setShowInvoicePreview(false)}>
-          <div className="bg-white rounded-lg max-w-4xl w-full my-8 max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+        <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-2 sm:p-4 overflow-y-auto" onClick={() => setShowInvoicePreview(false)}>
+          <div className="bg-white rounded-lg max-w-4xl w-full my-4 sm:my-8 max-h-[90vh] overflow-y-auto overflow-x-hidden" onClick={(e) => e.stopPropagation()}>
             <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex justify-between items-center">
               <h2 className="text-xl font-bold text-gray-900">Invoice Preview</h2>
               <button
