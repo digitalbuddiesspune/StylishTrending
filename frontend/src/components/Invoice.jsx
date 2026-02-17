@@ -93,9 +93,6 @@ const Invoice = ({ order, user, onPrint, onDownload }) => {
                 <p className="text-gray-700">
                   <span className="font-medium">Address:</span> B-628, Money Plant High Street, Nr. BSNL Office, Jagatpur, Ahmedabad, Gujarat - 382470
                 </p>
-                <p className="text-gray-700">
-                  <span className="font-medium">GST:</span> 24ABRCS0456MIZU
-                </p>
               </div>
             </div>
           </div>

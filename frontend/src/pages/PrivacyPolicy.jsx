@@ -147,7 +147,6 @@ const PrivacyPolicy = () => {
               <p className="text-gray-700"><strong>Email:</strong> niravpathak68@gmail.com</p>
               <p className="text-gray-700"><strong>Phone:</strong> 9316478446</p>
               <p className="text-gray-700"><strong>Address:</strong> B-628, Money Plant High Street, Nr. BSNL Office, Jagatpur, Ahmedabad, Gujarat - 382470</p>
-              <p className="text-gray-700"><strong>GST Number:</strong> 24ABRCS0456MIZU</p>
             </div>
           </section>
 
