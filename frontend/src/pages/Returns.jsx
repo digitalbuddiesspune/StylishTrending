@@ -28,7 +28,7 @@ const Returns = () => {
         <div className="mb-12 bg-white rounded-lg shadow-sm p-6">
           <h2 className="text-2xl font-semibold text-gray-900 mb-4">Return Policy</h2>
           <div className="space-y-4 text-gray-700">
-            <p>We offer a <strong>30-day return policy</strong> on all items. If you're not completely satisfied with your purchase, you can return it for a full refund or exchange.</p>
+            <p>We offer a <strong>7-day return policy</strong> on all items. If you're not completely satisfied with your purchase, you can return it for a full refund or exchange.</p>
             <div className="bg-gray-50 rounded-lg p-4 mt-4">
               <h3 className="font-semibold text-gray-900 mb-2">Items Eligible for Return:</h3>
               <ul className="list-disc list-inside space-y-1 text-gray-700">

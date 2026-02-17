@@ -85,13 +85,16 @@ const Invoice = ({ order, user, onPrint, onDownload }) => {
               <p className="text-gray-700">Fashion & Lifestyle Store</p>
               <div className="space-y-1 mt-2">
                 <p className="text-gray-700">
-                  <span className="font-medium">Email:</span> support@styletrending.com
+                  <span className="font-medium">Email:</span> niravpathak68@gmail.com
                 </p>
                 <p className="text-gray-700">
-                  <span className="font-medium">Phone:</span> +91 1800-XXX-XXXX
+                  <span className="font-medium">Phone:</span> 9316478446
                 </p>
                 <p className="text-gray-700">
-                  <span className="font-medium">Address:</span> Your Business Address, City, State - PIN
+                  <span className="font-medium">Address:</span> B-628, Money Plant High Street, Nr. BSNL Office, Jagatpur, Ahmedabad, Gujarat - 382470
+                </p>
+                <p className="text-gray-700">
+                  <span className="font-medium">GST:</span> 24ABRCS0456MIZU
                 </p>
               </div>
             </div>
@@ -260,7 +263,7 @@ const Invoice = ({ order, user, onPrint, onDownload }) => {
         <div className="mt-8 pt-6 border-t border-gray-200">
           <div className="text-center text-xs text-gray-500 space-y-1">
             <p>Thank you for your business!</p>
-            <p>For any queries, contact us at support@styletrending.com</p>
+            <p>For any queries, contact us at niravpathak68@gmail.com</p>
             <p className="mt-4">This is a computer-generated invoice and does not require a signature.</p>
           </div>
         </div>

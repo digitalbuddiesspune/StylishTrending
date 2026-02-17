@@ -70,7 +70,7 @@ function AppContent() {
           <Route path="/contact" element={<ContactUs />} />
           <Route path="/faq" element={<FAQ />} />
           <Route path="/shipping" element={<ShippingInfo />} />
-          <Route path="/returns" element={<Returns />} />
+          <Route path="/refund-and-cancellation-policy" element={<Returns />} />
           <Route path="/track-order" element={<TrackOrder />} />
           <Route path="/size-guide" element={<SizeGuide />} />
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />

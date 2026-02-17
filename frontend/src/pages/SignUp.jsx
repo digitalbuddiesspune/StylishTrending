@@ -103,7 +103,7 @@ const SignUp = () => {
         </div>
         <div className="relative z-10 text-sm text-gray-200 drop-shadow-sm">
           <div className="relative z-10 text-sm text-gray-200 drop-shadow-sm -ml-3">
-             <span className='text-white'>© 2024 StyleTrending.</span> All rights reserved.
+             <span className='text-white'>© {new Date().getFullYear()} StyleTrending.</span> All rights reserved.
           </div>
         </div>
       </div>

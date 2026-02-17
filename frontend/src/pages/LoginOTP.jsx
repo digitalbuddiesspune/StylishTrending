@@ -154,7 +154,7 @@ const LoginOTP = () => {
           </h1>
         </div>
         <div className="relative z-10 text-sm text-gray-300 drop-shadow-sm">
-          © 2024 StyleTrending. All rights reserved.
+          © {new Date().getFullYear()} StyleTrending. All rights reserved.
         </div>
       </div>
 

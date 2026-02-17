@@ -162,7 +162,7 @@ const Navbar = () => {
           TOP ANNOUNCEMENT BAR
       ======================== */}
       <div className="bg-black text-white text-[10px] md:text-xs font-bold tracking-widest text-center uppercase py-2">
-        Free Shipping on Orders Over ₹1,000 - Returns within 30 Days
+        Free Shipping on Orders Over ₹1,000 - Returns within 7 Days
       </div>
 
       {/* =======================

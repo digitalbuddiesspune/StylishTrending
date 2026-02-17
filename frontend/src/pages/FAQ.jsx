@@ -31,7 +31,7 @@ const FAQ = () => {
       questions: [
         {
           q: 'What is your return policy?',
-          a: 'We offer a 30-day return policy on all items. Items must be unworn, unwashed, and in their original packaging with tags attached. Customized or personalized items are not eligible for returns.'
+          a: 'We offer a 7-day return policy on all items. Items must be unworn, unwashed, and in their original packaging with tags attached. Customized or personalized items are not eligible for returns.'
         },
         {
           q: 'How do I return an item?',
@@ -102,7 +102,7 @@ const FAQ = () => {
         },
         {
           q: 'How can I contact customer service?',
-          a: 'You can reach us via email at support@styletrending.com, call us at +91 1800-123-4567, or use the contact form on our Contact Us page. Our team is available Monday-Friday, 9 AM - 6 PM.'
+          a: 'You can reach us via email at niravpathak68@gmail.com, call us at 9316478446, or use the contact form on our Contact Us page. Our team is available Monday-Friday, 9 AM - 6 PM.'
         },
         {
           q: 'Do you have a loyalty program?',

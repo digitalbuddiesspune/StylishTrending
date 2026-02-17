@@ -876,7 +876,7 @@ const ProductDetail = () => {
                     </svg>
                     <span className="text-xs font-semibold text-gray-700 uppercase">Easy Returns</span>
                   </div>
-                  <p className="text-xs text-gray-600">30 days return policy</p>
+                  <p className="text-xs text-gray-600">7 days return policy</p>
                 </div>
               </div>
 
@@ -1018,8 +1018,8 @@ const ProductDetail = () => {
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                     </svg>
                     <div>
-                      <p className="font-medium text-gray-900">5-Day Returns</p>
-                      <p className="text-gray-600">Easy returns within 30 days of purchase. No questions asked.</p>
+                      <p className="font-medium text-gray-900">7-Day Returns</p>
+                      <p className="text-gray-600">Easy returns within 7 days of purchase. No questions asked.</p>
                     </div>
                   </div>
                   <div className="flex items-start gap-3">

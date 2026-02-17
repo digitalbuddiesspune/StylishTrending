@@ -13,7 +13,7 @@ const TermsOfService = () => {
             Back to Home
           </Link>
           <h1 className="text-4xl font-bold text-gray-900 mb-2">Terms of Service</h1>
-          <p className="text-gray-600">Last updated: January 2024</p>
+          <p className="text-gray-600">Last updated: January {new Date().getFullYear()}</p>
         </div>
 
         <div className="bg-white rounded-lg shadow-sm p-8 space-y-8">
@@ -102,7 +102,7 @@ const TermsOfService = () => {
           <section>
             <h2 className="text-2xl font-semibold text-gray-900 mb-4">6. Returns and Refunds</h2>
             <p className="text-gray-700 leading-relaxed">
-              Our return and refund policy is detailed in our <Link to="/returns" className="text-gray-900 underline hover:text-gray-700">Returns Policy</Link>. 
+              Our return and refund policy is detailed in our <Link to="/refund-and-cancellation-policy" className="text-gray-900 underline hover:text-gray-700">Refund & Cancellation Policy</Link>. 
               By making a purchase, you agree to our return and refund policy. We reserve the right to refuse returns that 
               do not comply with our policy.
             </p>
@@ -157,7 +157,7 @@ const TermsOfService = () => {
             <p className="text-gray-700 leading-relaxed">
               These Terms of Service shall be governed by and construed in accordance with the laws of India, without regard to 
               its conflict of law provisions. Any disputes arising under or in connection with these terms shall be subject to 
-              the exclusive jurisdiction of the courts of Mumbai, India.
+              the exclusive jurisdiction of the courts of Ahmedabad, Gujarat, India.
             </p>
           </section>
 
@@ -176,9 +176,10 @@ const TermsOfService = () => {
               If you have any questions about these Terms of Service, please contact us at:
             </p>
             <div className="mt-4 p-4 bg-gray-50 rounded-lg">
-              <p className="text-gray-700"><strong>Email:</strong> legal@styletrending.com</p>
-              <p className="text-gray-700"><strong>Phone:</strong> +91 1800-123-4567</p>
-              <p className="text-gray-700"><strong>Address:</strong> 123 Shopping Street, Mumbai, India 400001</p>
+              <p className="text-gray-700"><strong>Email:</strong> niravpathak68@gmail.com</p>
+              <p className="text-gray-700"><strong>Phone:</strong> 9316478446</p>
+              <p className="text-gray-700"><strong>Address:</strong> B-628, Money Plant High Street, Nr. BSNL Office, Jagatpur, Ahmedabad, Gujarat - 382470</p>
+              <p className="text-gray-700"><strong>GST Number:</strong> 24ABRCS0456MIZU</p>
             </div>
           </section>
         </div>

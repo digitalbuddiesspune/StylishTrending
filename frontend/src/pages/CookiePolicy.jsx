@@ -13,7 +13,7 @@ const CookiePolicy = () => {
             Back to Home
           </Link>
           <h1 className="text-4xl font-bold text-gray-900 mb-2">Cookie Policy</h1>
-          <p className="text-gray-600">Last updated: January 2024</p>
+          <p className="text-gray-600">Last updated: January {new Date().getFullYear()}</p>
         </div>
 
         <div className="bg-white rounded-lg shadow-sm p-8 space-y-8">
@@ -182,9 +182,10 @@ const CookiePolicy = () => {
               If you have any questions about our use of cookies, please contact us at:
             </p>
             <div className="mt-4 p-4 bg-gray-50 rounded-lg">
-              <p className="text-gray-700"><strong>Email:</strong> privacy@styletrending.com</p>
-              <p className="text-gray-700"><strong>Phone:</strong> +91 1800-123-4567</p>
-              <p className="text-gray-700"><strong>Address:</strong> 123 Shopping Street, Mumbai, India 400001</p>
+              <p className="text-gray-700"><strong>Email:</strong> niravpathak68@gmail.com</p>
+              <p className="text-gray-700"><strong>Phone:</strong> 9316478446</p>
+              <p className="text-gray-700"><strong>Address:</strong> B-628, Money Plant High Street, Nr. BSNL Office, Jagatpur, Ahmedabad, Gujarat - 382470</p>
+              <p className="text-gray-700"><strong>GST Number:</strong> 24ABRCS0456MIZU</p>
             </div>
           </section>
         </div>

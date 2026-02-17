@@ -9,6 +9,7 @@
     "dev": "nodemon server.js",
     "seed": "node seed.js",
     "set-admin": "node scripts/setAdmin.js",
+    "create-admin": "node scripts/createAdmin.js",
     "init-saree": "node initSareeCollection.js"
   },
   "keywords": [

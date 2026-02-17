@@ -13,7 +13,7 @@ const PrivacyPolicy = () => {
             Back to Home
           </Link>
           <h1 className="text-4xl font-bold text-gray-900 mb-2">Privacy Policy</h1>
-          <p className="text-gray-600">Last updated: January 2024</p>
+          <p className="text-gray-600">Last updated: January {new Date().getFullYear()}</p>
         </div>
 
         <div className="bg-white rounded-lg shadow-sm p-8 space-y-8">
@@ -21,7 +21,7 @@ const PrivacyPolicy = () => {
             <h2 className="text-2xl font-semibold text-gray-900 mb-4">1. Introduction</h2>
             <p className="text-gray-700 leading-relaxed">
               Welcome to StyleTrending. We are committed to protecting your personal information and your right to privacy. 
-              This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit 
+              This Privacy Policy explains how <b>SHOPISTIX ECOMMERCE SERVICESI(OPC) PRIVATE LIMITED</b> collect, use, disclose, and safeguard your information when you visit 
               our website and use our services.
             </p>
           </section>
@@ -144,10 +144,27 @@ const PrivacyPolicy = () => {
               If you have any questions about this Privacy Policy, please contact us at:
             </p>
             <div className="mt-4 p-4 bg-gray-50 rounded-lg">
-              <p className="text-gray-700"><strong>Email:</strong> privacy@styletrending.com</p>
-              <p className="text-gray-700"><strong>Phone:</strong> +91 1800-123-4567</p>
-              <p className="text-gray-700"><strong>Address:</strong> 123 Shopping Street, Mumbai, India 400001</p>
+              <p className="text-gray-700"><strong>Email:</strong> niravpathak68@gmail.com</p>
+              <p className="text-gray-700"><strong>Phone:</strong> 9316478446</p>
+              <p className="text-gray-700"><strong>Address:</strong> B-628, Money Plant High Street, Nr. BSNL Office, Jagatpur, Ahmedabad, Gujarat - 382470</p>
+              <p className="text-gray-700"><strong>GST Number:</strong> 24ABRCS0456MIZU</p>
             </div>
+          </section>
+
+          <section>
+            <h2 className="text-2xl font-semibold text-gray-900 mb-4">11. Data Retention Policy</h2>
+            <p className="text-gray-700 leading-relaxed mb-3">
+              We retain your data according to the following retention periods:
+            </p>
+            <ul className="list-disc list-inside space-y-2 text-gray-700 ml-4">
+              <li>Customer account information is retained while the account is active and up to 3 years after closure.</li>
+              <li>Order, invoice, payment, and GST-related records are retained for a minimum of 8 years as required by law.</li>
+              <li>KYC documents, where applicable, are retained during the business relationship and for 5 years thereafter.</li>
+              <li>Marketing and analytics data is retained until consent is withdrawn or for a maximum of 24 months.</li>
+            </ul>
+            <p className="text-gray-700 leading-relaxed mt-4">
+              Data is securely deleted or anonymized once the retention period expires, unless legally required otherwise.
+            </p>
           </section>
         </div>
       </div>
